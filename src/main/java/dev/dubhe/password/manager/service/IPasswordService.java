@@ -10,7 +10,7 @@ import java.util.List;
 public interface IPasswordService {
     boolean createPassword(@Nonnull User user, @Nonnull String username, @Nonnull String password, @Nullable String url, @Nullable String desc);
 
-    boolean changePassword(@Nonnull User user, @Nonnull Long password,@Nonnull String username,  @Nullable String pwd, @Nullable String url, @Nullable String desc);
+    boolean changePassword(@Nonnull User user, @Nonnull Long password, @Nullable String username, @Nullable String pwd, @Nullable String url, @Nullable String desc);
 
     boolean removePassword(@Nonnull User user, @Nonnull Long password);
 

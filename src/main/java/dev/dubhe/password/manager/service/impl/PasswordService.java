@@ -28,11 +28,12 @@ public class PasswordService implements IPasswordService {
     }
 
     @Override
-    public boolean changePassword(@Nonnull User user, @Nonnull Long password, @Nonnull String username, String pwd, @Nullable String url, @Nullable String desc) {
+    public boolean changePassword(@Nonnull User user, @Nonnull Long password, @Nullable String username, @Nullable String pwd, @Nullable String url, @Nullable String desc) {
         Password password1 = passwordDao.getById(password);
         if (!password1.getUser().equals(user.getId())) throw CustomException.forbidden();
         pwd = pwd == null ? password1.getPassword() : AESUtil.encrypt(pwd, user.getPassword());
         password1.setPassword(pwd);
+        password1.setUsername(username == null ? password1.getUrl() : username);
         password1.setUrl(url == null ? password1.getUrl() : url);
         password1.setDescription(desc == null ? password1.getDescription() : desc);
         return passwordDao.updateById(password1);

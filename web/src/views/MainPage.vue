@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {goToLogin} from "../router";
-import {ref} from "vue";
-import {Operate, AESUtil} from "../util";
+import {Ref, ref} from "vue";
+import {Operate, AESUtil, dataCopy} from "../util";
 import {Request} from "../request";
 
 let token = localStorage.getItem("token");
@@ -94,7 +94,7 @@ function add() {
   })
 }
 
-const changeData = ref({
+const changeData: Ref<any> = ref({
   id: undefined,
   url: undefined,
   username: undefined,
@@ -104,7 +104,7 @@ const changeData = ref({
 const changeOpen = ref(false);
 
 function openChange(data: any) {
-  changeData.value = data
+  changeData.value = dataCopy(data);
   changeOpen.value = true;
 }
 

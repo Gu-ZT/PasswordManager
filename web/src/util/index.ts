@@ -33,11 +33,32 @@ export class AESUtil {
 
     public static decrypt(data: string, key: string): string {
         let base64 = CryptoJS.enc.Base64.parse(data);
-        let decrypt = CryptoJS.AES.decrypt({ciphertext: base64}, CryptoJS.MD5(key), {
+        let params: any = {ciphertext: base64};
+        let decrypt = CryptoJS.AES.decrypt(params, CryptoJS.MD5(key), {
             mode: CryptoJS.mode.ECB,
             padding: CryptoJS.pad.Pkcs7
         });
         let decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
         return decryptedStr.toString();
     }
+}
+
+export function dataCopy(data: object | any[] | any): object | any[] {
+    if (!data) return data;
+    let obj: object | any[] | undefined = undefined;
+    if (data instanceof Array) {
+        let temp: any[] = [];
+        for (let i = 0, l = data.length; i < l; i++) {
+            temp[i] = dataCopy(data[i]);
+        }
+        obj = temp;
+    } else if (typeof data === 'object') {
+        let temp: any = {};
+        for (let key in data) {
+            temp[key] = dataCopy(data[key]);
+        }
+        obj = temp;
+    }
+    if (obj !== undefined) return obj;
+    else return data;
 }
