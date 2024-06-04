@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 import {Request} from "../request";
+import {goToHome} from "../router";
 
 const registerData = ref({
   username: undefined,
@@ -9,7 +10,10 @@ const registerData = ref({
 
 function register() {
   Request.post("/login/register", registerData.value, ctx => {
-    console.log(ctx);
+    localStorage.setItem("id", ctx.data.id);
+    localStorage.setItem("nickname", ctx.data.nickname);
+    localStorage.setItem("token", ctx.data.token);
+    goToHome();
   });
 }
 </script>

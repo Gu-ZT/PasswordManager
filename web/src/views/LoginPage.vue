@@ -13,7 +13,6 @@ function login() {
     localStorage.setItem("id", ctx.data.id);
     localStorage.setItem("nickname", ctx.data.nickname);
     localStorage.setItem("token", ctx.data.token);
-    console.log(localStorage.getItem("token"));
     goToHome();
   });
 }
