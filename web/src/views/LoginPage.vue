@@ -2,7 +2,7 @@
 import {Ref, ref} from "vue";
 import {Request} from "../request";
 import {goToHome} from "../router";
-import {RSAUtil} from "../util";
+import {AESUtil, MD5Util, RSAUtil} from "../util";
 
 const loginData: Ref<any> = ref({
   username: undefined,
@@ -15,11 +15,12 @@ function login() {
     localStorage.setItem("ServerPublicKey", serverKey);
     Request.post("/login/login", {
       username: loginData.value.username,
-      password: RSAUtil.encrypt(loginData.value.password, serverKey),
+      password: RSAUtil.encrypt(MD5Util.encrypt(loginData.value.password), serverKey),
     }, ctx => {
       localStorage.setItem("id", ctx.data.id);
       localStorage.setItem("nickname", ctx.data.nickname);
       localStorage.setItem("token", ctx.data.token);
+      localStorage.setItem("pwd", MD5Util.encrypt(AESUtil.encrypt(loginData.value.password, '666')));
       let key = RSAUtil.generateKey();
       localStorage.setItem("PublicKey", key.public);
       localStorage.setItem("PrivateKey", key.private);

@@ -1,5 +1,6 @@
 package dev.dubhe.password.manager.service.impl;
 
+import cn.hutool.crypto.digest.BCrypt;
 import dev.dubhe.password.manager.data.dao.IUserDao;
 import dev.dubhe.password.manager.data.pojo.User;
 import dev.dubhe.password.manager.data.vo.UserLoginVo;
@@ -32,6 +33,9 @@ public class UserService implements IUserService {
     public UserLoginVo login(String username, String password) {
         User user = userDao.getByUserName(username);
         if (user == null) throw new CustomException("用户不存在");
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw CustomException.loginFail();
+        }
         String token = tokenService.createToken(user);
         return new UserLoginVo(user.getId(), user.getNickname(), token);
     }

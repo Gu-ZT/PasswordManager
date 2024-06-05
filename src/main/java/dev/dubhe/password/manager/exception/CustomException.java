@@ -35,6 +35,10 @@ public class CustomException extends RuntimeException {
         return new CustomException(HttpStatus.HTTP_UNAUTHORIZED, "用户不存在或登录过期");
     }
 
+    public static @Nonnull CustomException loginFail() {
+        return new CustomException(HttpStatus.HTTP_UNAUTHORIZED, "用户名或密码错误");
+    }
+
     public static @Nonnull CustomException operationFailed(){
         return new CustomException(HttpStatus.HTTP_NOT_MODIFIED, "操作失败");
     }

@@ -1,7 +1,8 @@
-import {MessageInstance} from "ant-design-vue/es/message/interface";
+import {MessageInstance} from 'ant-design-vue/es/message/interface';
 import CryptoJS from 'crypto-js';
 import JSEncrypt from 'jsencrypt';
-import JsRsaSign from "jsrsasign";
+import JsRsaSign from 'jsrsasign';
+import MD5 from 'js-md5';
 
 export class Operate {
     public static messageApi: MessageInstance | null = null;
@@ -63,6 +64,12 @@ export class RSAUtil {
         const encryptor = new JSEncrypt();
         encryptor.setPrivateKey(key);
         return encryptor.decrypt(data);
+    }
+}
+
+export class MD5Util {
+    public static encrypt(data: string) {
+        return MD5.md5(data);
     }
 }
 

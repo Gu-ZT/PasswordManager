@@ -8,6 +8,7 @@ create table if not exists `password`
     `user`        bigint           not null comment '用户ID',
     `url`         varchar(255)     not null comment '链接',
     `description` varchar(255)     not null comment '描述',
+    `username`    varchar(255)     not null comment '用户名',
     `password`    varchar(255)     not null comment '密码',
     constraint pwd_pk primary key (id)
 );

@@ -60,7 +60,11 @@ function getData() {
     data.value = ctx.data;
     data.value.forEach((item: any) => {
       let key = localStorage.getItem("PrivateKey");
-      if (key) item.password = RSAUtil.decrypt(item.password, key);
+      let pwd = localStorage.getItem('pwd');
+      if (key && pwd) {
+        let password = RSAUtil.decrypt(item.password, key);
+        if (password) item.password = AESUtil.decrypt(password, pwd)
+      }
     })
   });
 }
@@ -87,10 +91,11 @@ function add() {
   Request.get("/auth/public", (ctx: any) => {
     let serverKey = ctx.msg;
     localStorage.setItem("ServerPublicKey", serverKey);
-    Request.post("/pwd/add", {
+    let key = localStorage.getItem('pwd');
+    if (key) Request.post("/pwd/add", {
       url: addData.value.url,
       username: addData.value.username,
-      password: RSAUtil.encrypt(addData.value.password, serverKey),
+      password: RSAUtil.encrypt(AESUtil.encrypt(addData.value.password, key), serverKey),
       desc: addData.value.desc,
     }, _ => {
       addData.value = {
@@ -123,11 +128,12 @@ function change() {
   Request.get("/auth/public", (ctx: any) => {
     let serverKey = ctx.msg;
     localStorage.setItem("ServerPublicKey", serverKey);
-    Request.post("/pwd/change", {
+    let key = localStorage.getItem('pwd');
+    if (key) Request.post("/pwd/change", {
       id: changeData.value.id,
       url: changeData.value.url,
       username: changeData.value.username,
-      password: RSAUtil.encrypt(changeData.value.password, serverKey),
+      password: RSAUtil.encrypt(AESUtil.encrypt(changeData.value.password, key), serverKey),
       desc: changeData.value.desc,
     }, _ => {
       changeData.value = {

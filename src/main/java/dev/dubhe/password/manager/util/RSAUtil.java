@@ -111,7 +111,6 @@ public class RSAUtil {
      * @return base64编码后的字符串
      */
     public static @Nonnull String encryptByPublicKey(@Nonnull String data, String key) {
-        System.out.println(key);
         try {
             //Java原生base64解码
             byte[] pubKey = Base64.getDecoder().decode(key);
@@ -154,7 +153,6 @@ public class RSAUtil {
     public static @Nonnull String encryptByPrivateKey(@Nonnull String data) {
         try {
             //Java原生base64解码
-            System.out.println(RSAUtil.getPrivateKey());
             byte[] priKey = Base64.getDecoder().decode(RSAUtil.getPrivateKey());
             //创建PKCS8编码密钥规范
             PKCS8EncodedKeySpec pkcs8KeySpec = new PKCS8EncodedKeySpec(priKey);
