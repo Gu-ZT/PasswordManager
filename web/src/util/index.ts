@@ -73,6 +73,18 @@ export class MD5Util {
     }
 }
 
+export class PWDUtil {
+    public static generate(length: number) {
+        const charset: string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+        let password: string = '';
+        for (let i: number = 0; i < length; i++) {
+            const randomIndex: number = Math.floor(Math.random() * charset.length);
+            password += charset[randomIndex];
+        }
+        return password;
+    }
+}
+
 export function dataCopy(data: object | any[] | any): object | any[] {
     if (!data) return data;
     let obj: object | any[] | undefined = undefined;

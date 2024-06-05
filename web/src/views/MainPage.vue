@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {goToLogin} from "../router";
 import {Ref, ref} from "vue";
-import {Operate, AESUtil, dataCopy, RSAUtil} from "../util";
+import {Operate, AESUtil, dataCopy, RSAUtil, PWDUtil} from "../util";
 import {Request} from "../request";
+import {SyncOutlined} from "@ant-design/icons-vue";
 
 let token = localStorage.getItem("token");
 if (token == null) goToLogin();
@@ -110,6 +111,10 @@ function add() {
   });
 }
 
+function random() {
+  addData.value.password = PWDUtil.generate(16);
+}
+
 const changeData: Ref<any> = ref({
   id: undefined,
   url: undefined,
@@ -155,10 +160,6 @@ function remove(id: any) {
   });
 }
 
-function pwdChange(e: any, data: any) {
-  data.password = e.target.__vnode.props.value;
-}
-
 Request.post("/auth/test/get", {
   key: localStorage.getItem("PublicKey")
 }, (ctx: any) => {
@@ -178,7 +179,7 @@ Request.post("/auth/test/get", {
     <template #bodyCell="{ column,record }">
       <template v-if="column.key === 'password'">
         <a-space>
-          <a-input-password v-model:value="record.password" @change="(e:any)=>pwdChange(e,record)"/>
+          <a-input-password v-model:value="record.password" readonly/>
           <a-button @click="copyText(record.password)">复制</a-button>
         </a-space>
       </template>
@@ -198,7 +199,12 @@ Request.post("/auth/test/get", {
   <a-modal v-model:open="addOpen" title="添加密码" @ok="add">
     <a-input v-model:value="addData.url" placeholder="URL"/>
     <a-input v-model:value="addData.username" placeholder="用户名"/>
-    <a-input-password v-model:value="addData.password" placeholder="密码"/>
+    <a-input-password v-model:value="addData.password" placeholder="密码">
+      <template #prefix><a-tooltip title="随机生成密码">
+        <sync-outlined style="color: rgba(0, 0, 0, 0.45)" @click="random"/>
+      </a-tooltip>
+      </template>
+    </a-input-password>
     <a-input v-model:value="addData.desc" placeholder="描述"/>
   </a-modal>
   <a-modal v-model:open="changeOpen" title="修改" @ok="change">
