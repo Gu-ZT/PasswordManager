@@ -1,12 +1,14 @@
 package dev.dubhe.password.manager.controller;
 
 import dev.dubhe.password.manager.data.ResponseResult;
+import dev.dubhe.password.manager.data.dto.KeyDto;
 import dev.dubhe.password.manager.data.dto.PasswordAddDto;
 import dev.dubhe.password.manager.data.dto.PasswordChangeDto;
 import dev.dubhe.password.manager.data.pojo.User;
 import dev.dubhe.password.manager.exception.CustomException;
 import dev.dubhe.password.manager.service.IPasswordService;
 import dev.dubhe.password.manager.service.ITokenService;
+import dev.dubhe.password.manager.util.RSAUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,11 +58,11 @@ public class PasswordController {
         return ResponseResult.SUCCESS;
     }
 
-    @GetMapping("/get")
-    public ResponseResult get(HttpServletRequest request) {
+    @PostMapping("/get")
+    public ResponseResult get(@RequestBody KeyDto dto, HttpServletRequest request) {
         String token = tokenService.getToken(request);
         User user = tokenService.parserToken(token);
         if (user == null) throw CustomException.unauthorized();
-        return ResponseResult.success(passwordService.getPasswords(user, token));
+        return ResponseResult.success(passwordService.getPasswords(user, token, RSAUtil.decoderPublicKey(dto.getKey().replace("\r", ""))));
     }
 }

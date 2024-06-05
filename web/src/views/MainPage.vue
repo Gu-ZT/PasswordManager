@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {goToLogin} from "../router";
 import {Ref, ref} from "vue";
-import {Operate, AESUtil, dataCopy} from "../util";
+import {Operate, AESUtil, dataCopy, RSAUtil} from "../util";
 import {Request} from "../request";
 
 let token = localStorage.getItem("token");
@@ -54,16 +54,18 @@ function copyText(value: string) {
 }
 
 function getData() {
-  Request.get("/pwd/get", ctx => {
+  Request.post("/pwd/get", {
+    key: localStorage.getItem("PublicKey")
+  }, ctx => {
     data.value = ctx.data;
     data.value.forEach((item: any) => {
-      let token = localStorage.getItem("token");
-      if (token) item.password = AESUtil.decrypt(item.password, token);
+      let key = localStorage.getItem("PrivateKey");
+      if (key) item.password = RSAUtil.decrypt(item.password, key);
     })
-  })
+  });
 }
 
-const addData = ref({
+const addData: Ref<any> = ref({
   url: undefined,
   username: undefined,
   password: undefined,
@@ -82,16 +84,25 @@ function openAdd() {
 }
 
 function add() {
-  Request.post("/pwd/add", addData.value, _ => {
-    addData.value = {
-      url: undefined,
-      username: undefined,
-      password: undefined,
-      desc: undefined,
-    }
-    addOpen.value = false;
-    getData();
-  })
+  Request.get("/auth/public", (ctx: any) => {
+    let serverKey = ctx.msg;
+    localStorage.setItem("ServerPublicKey", serverKey);
+    Request.post("/pwd/add", {
+      url: addData.value.url,
+      username: addData.value.username,
+      password: RSAUtil.encrypt(addData.value.password, serverKey),
+      desc: addData.value.desc,
+    }, _ => {
+      addData.value = {
+        url: undefined,
+        username: undefined,
+        password: undefined,
+        desc: undefined,
+      }
+      addOpen.value = false;
+      getData();
+    });
+  });
 }
 
 const changeData: Ref<any> = ref({
@@ -109,17 +120,27 @@ function openChange(data: any) {
 }
 
 function change() {
-  Request.post("/pwd/change", changeData.value, _ => {
-    changeData.value = {
-      id: undefined,
-      url: undefined,
-      username: undefined,
-      password: undefined,
-      desc: undefined,
-    }
-    changeOpen.value = false;
-    getData();
-  })
+  Request.get("/auth/public", (ctx: any) => {
+    let serverKey = ctx.msg;
+    localStorage.setItem("ServerPublicKey", serverKey);
+    Request.post("/pwd/change", {
+      id: changeData.value.id,
+      url: changeData.value.url,
+      username: changeData.value.username,
+      password: RSAUtil.encrypt(changeData.value.password, serverKey),
+      desc: changeData.value.desc,
+    }, _ => {
+      changeData.value = {
+        id: undefined,
+        url: undefined,
+        username: undefined,
+        password: undefined,
+        desc: undefined,
+      }
+      changeOpen.value = false;
+      getData();
+    });
+  });
 }
 
 function remove(id: any) {
@@ -131,6 +152,14 @@ function remove(id: any) {
 function pwdChange(e: any, data: any) {
   data.password = e.target.__vnode.props.value;
 }
+
+Request.post("/auth/test/get", {
+  key: localStorage.getItem("PublicKey")
+}, (ctx: any) => {
+  let key = localStorage.getItem("PrivateKey");
+  if (key) console.log(RSAUtil.decrypt(ctx.msg, key));
+})
+
 </script>
 
 <template>

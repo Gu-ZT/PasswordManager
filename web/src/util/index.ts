@@ -1,5 +1,7 @@
 import {MessageInstance} from "ant-design-vue/es/message/interface";
 import CryptoJS from 'crypto-js';
+import JSEncrypt from 'jsencrypt';
+import JsRsaSign from "jsrsasign";
 
 export class Operate {
     public static messageApi: MessageInstance | null = null;
@@ -40,6 +42,27 @@ export class AESUtil {
         });
         let decryptedStr = decrypt.toString(CryptoJS.enc.Utf8);
         return decryptedStr.toString();
+    }
+}
+
+export class RSAUtil {
+    public static generateKey() {
+        const keyPair = JsRsaSign.KEYUTIL.generateKeypair("RSA", 1024);
+        const publicKey = JsRsaSign.KEYUTIL.getPEM(keyPair.pubKeyObj);
+        const privateKey = JsRsaSign.KEYUTIL.getPEM(keyPair.prvKeyObj, "PKCS8PRV");
+        return {public: publicKey, private: privateKey};
+    }
+
+    public static encrypt(data: string, key: string) {
+        const encryptor = new JSEncrypt();
+        encryptor.setPublicKey(key);
+        return encryptor.encrypt(data);
+    }
+
+    public static decrypt(data: string, key: string) {
+        const encryptor = new JSEncrypt();
+        encryptor.setPrivateKey(key);
+        return encryptor.decrypt(data);
     }
 }
 

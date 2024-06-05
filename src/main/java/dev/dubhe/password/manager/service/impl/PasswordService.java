@@ -8,6 +8,7 @@ import dev.dubhe.password.manager.data.vo.PasswordVo;
 import dev.dubhe.password.manager.exception.CustomException;
 import dev.dubhe.password.manager.service.IPasswordService;
 import dev.dubhe.password.manager.util.AESUtil;
+import dev.dubhe.password.manager.util.RSAUtil;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class PasswordService implements IPasswordService {
     }
 
     @Override
-    public List<PasswordVo> getPasswords(@Nonnull User user, @Nonnull String token) {
+    public List<PasswordVo> getPasswords(@Nonnull User user, @Nonnull String token, @Nonnull String key) {
         QueryWrapper<Password> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user", "%s".formatted(user.getId()));
         List<Password> list = passwordDao.list(queryWrapper);
@@ -55,7 +56,7 @@ public class PasswordService implements IPasswordService {
             password -> new PasswordVo(
                 password.getId().toString(),
                 password.getUsername(),
-                AESUtil.encrypt(AESUtil.decrypt(password.getPassword(), user.getPassword()), token),
+                RSAUtil.encryptByPublicKey(AESUtil.decrypt(password.getPassword(), user.getPassword()), key),
                 password.getUrl(),
                 password.getDescription()
             )

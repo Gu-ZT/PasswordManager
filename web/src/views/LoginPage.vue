@@ -1,19 +1,30 @@
 <script setup lang="ts">
-import {ref} from "vue";
+import {Ref, ref} from "vue";
 import {Request} from "../request";
 import {goToHome} from "../router";
+import {RSAUtil} from "../util";
 
-const loginData = ref({
+const loginData: Ref<any> = ref({
   username: undefined,
   password: undefined
 });
 
 function login() {
-  Request.post("/login/login", loginData.value, ctx => {
-    localStorage.setItem("id", ctx.data.id);
-    localStorage.setItem("nickname", ctx.data.nickname);
-    localStorage.setItem("token", ctx.data.token);
-    goToHome();
+  Request.get("/auth/public", (ctx: any) => {
+    let serverKey = ctx.msg;
+    localStorage.setItem("ServerPublicKey", serverKey);
+    Request.post("/login/login", {
+      username: loginData.value.username,
+      password: RSAUtil.encrypt(loginData.value.password, serverKey),
+    }, ctx => {
+      localStorage.setItem("id", ctx.data.id);
+      localStorage.setItem("nickname", ctx.data.nickname);
+      localStorage.setItem("token", ctx.data.token);
+      let key = RSAUtil.generateKey();
+      localStorage.setItem("PublicKey", key.public);
+      localStorage.setItem("PrivateKey", key.private);
+      goToHome();
+    });
   });
 }
 </script>

@@ -14,5 +14,5 @@ public interface IPasswordService {
 
     boolean removePassword(@Nonnull User user, @Nonnull Long password);
 
-    List<PasswordVo> getPasswords(@Nonnull User user, @Nonnull String token);
+    List<PasswordVo> getPasswords(@Nonnull User user, @Nonnull String token, @Nonnull String key);
 }

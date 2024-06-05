@@ -18,6 +18,8 @@
     "crypto-js": "^4.2.0",
     "echarts": "^5.4.2",
     "js-md5": "^0.8.3",
+    "jsencrypt": "^3.3.2",
+    "jsrsasign": "^11.1.0",
     "vite-plugin-require-transform": "^1.0.21",
     "vue": "^3.4.21",
     "vue-class-component": "^8.0.0-0",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
+    "@types/jsrsasign": "^10.5.14",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
     "@vitejs/plugin-vue": "^5.0.4",

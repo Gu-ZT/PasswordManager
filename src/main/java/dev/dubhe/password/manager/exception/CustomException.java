@@ -19,6 +19,18 @@ public class CustomException extends RuntimeException {
         this.code = code;
     }
 
+    public static @Nonnull CustomException error() {
+        return CustomException.error("系统错误");
+    }
+
+    public static @Nonnull CustomException error(String msg) {
+        return new CustomException(msg);
+    }
+
+    public static @Nonnull CustomException error(Throwable throwable) {
+        return new CustomException(throwable.getMessage());
+    }
+
     public static @Nonnull CustomException unauthorized() {
         return new CustomException(HttpStatus.HTTP_UNAUTHORIZED, "用户不存在或登录过期");
     }

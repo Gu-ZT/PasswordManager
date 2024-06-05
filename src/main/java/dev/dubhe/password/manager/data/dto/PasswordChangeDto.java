@@ -1,6 +1,6 @@
 package dev.dubhe.password.manager.data.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import dev.dubhe.password.manager.util.RSAUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,4 +12,8 @@ public class PasswordChangeDto {
     private String password;
     private String url;
     private String desc;
+
+    public String getPassword() {
+        return RSAUtil.decryptByPrivateKey(this.password);
+    }
 }

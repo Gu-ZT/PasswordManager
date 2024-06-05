@@ -1,5 +1,6 @@
 package dev.dubhe.password.manager.data.dto;
 
+import dev.dubhe.password.manager.util.RSAUtil;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,4 +12,8 @@ public class LoginDto {
     private String username;
     @NotBlank(message = "用户名或密码不能为空")
     private String password;
+
+    public String getPassword() {
+        return RSAUtil.decryptByPrivateKey(this.password);
+    }
 }
